@@ -25,3 +25,6 @@ distributed_todo-*.tar
 
 # Temporary files for e.g. tests
 /tmp
+
+# Persistent storage for erlang term to binary calls
+/store
