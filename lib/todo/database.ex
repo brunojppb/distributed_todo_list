@@ -33,10 +33,18 @@ defmodule Todo.Database do
   end
 
   defp init_workers() do
-    for index <- 1..3, into: %{} do
-      {:ok, pid} = Todo.DatabaseWorker.start(@db_folder)
-      {index - 1, pid}
-    end
+    Enum.reduce(
+      0..3,
+      %{},
+      fn index, map ->
+        {:ok, pid} = Todo.DatabaseWorker.start(@db_folder)
+        Map.put(map, index, pid)
+      end
+    )
+    # for index <- 1..3, into: %{} do
+    #   {:ok, pid} = Todo.DatabaseWorker.start(@db_folder)
+    #   {index - 1, pid}
+    # end
   end
 
   defp choose_worker(workers_map, key) do
