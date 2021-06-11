@@ -11,6 +11,7 @@ defmodule Todo.Cache do
 
   @impl GenServer
   def init(_) do
+    IO.puts("Starting cache server...")
     Todo.Database.start()
     {:ok, %{}}
   end

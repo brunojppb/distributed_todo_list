@@ -9,7 +9,6 @@ defmodule Todo.Server do
     GenServer.cast(todo_server, {:add_entry, new_entry})
   end
 
-  @spec entries(atom | pid | {atom, any} | {:via, atom, any}, any) :: any
   def entries(todo_server, date) do
     GenServer.call(todo_server, {:entries, date})
   end
