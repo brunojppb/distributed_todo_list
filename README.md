@@ -4,7 +4,7 @@ Start `iex` and execute the following:
 
 ```elixir
 # Start the cache server
-{:ok, cache} = Todo.Cache.start()
+Todo.System.start_link()
 
 # Start the todo server for the given todolist
 server = Todo.Cache.server_process(cache, "this_is_cool")

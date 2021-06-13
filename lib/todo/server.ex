@@ -1,8 +1,10 @@
 defmodule Todo.Server do
+  require Logger
   use GenServer
 
-  def start(list_name) do
-    GenServer.start(__MODULE__, list_name)
+  def start_link(list_name) do
+    Logger.info("Starting server for list #{list_name}")
+    GenServer.start_link(__MODULE__, list_name)
   end
 
   def add_entry(todo_server, new_entry) do
