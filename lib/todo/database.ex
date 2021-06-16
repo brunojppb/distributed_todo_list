@@ -4,7 +4,7 @@ defmodule Todo.Database do
 
   @db_folder "./store"
 
-  def start_link do
+  def start_link(_) do
     Logger.info("Starting Database")
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
