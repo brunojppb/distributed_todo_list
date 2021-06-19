@@ -1,10 +1,13 @@
 defmodule Todo.Server do
   require Logger
-  use GenServer
+  use GenServer, restart: :temporary
 
   def start_link(list_name) do
-    Logger.info("Starting server for list #{list_name}")
-    GenServer.start_link(__MODULE__, list_name)
+    GenServer.start_link(__MODULE__, list_name, name: via_tuple(list_name))
+  end
+
+  defp via_tuple(list_name) do
+    Todo.ProcessRegistry.via_tuple({__MODULE__, list_name})
   end
 
   def add_entry(todo_server, new_entry) do
@@ -17,6 +20,7 @@ defmodule Todo.Server do
 
   @impl GenServer
   def init(list_name) do
+    Logger.info("Starting server for list #{list_name}")
     # Try to fetch it from disk. Fallback to empty list
     initial_list = Todo.Database.get(list_name) || Todo.List.new()
     {:ok, {list_name, initial_list}}
