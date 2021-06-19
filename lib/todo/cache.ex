@@ -3,7 +3,6 @@ defmodule Todo.Cache do
   use GenServer
 
   def start_link(_) do
-    Logger.info("Starting link cache process")
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
