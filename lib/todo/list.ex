@@ -23,6 +23,10 @@ defmodule Todo.List do
     |> Enum.map(fn {_, entry} -> entry end)
   end
 
+  def all_entries(todo_list) do
+    todo_list.entries
+  end
+
   def update_entry(todo_list, %{} = new_entry) do
     update_entry(todo_list, new_entry.id, fn _ -> new_entry end)
   end

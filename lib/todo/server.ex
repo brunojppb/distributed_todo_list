@@ -1,9 +1,15 @@
 defmodule Todo.Server do
   require Logger
-  use GenServer, restart: :temporary
+  use Agent, restart: :temporary
 
   def start_link(list_name) do
-    GenServer.start_link(__MODULE__, list_name, name: via_tuple(list_name))
+    Agent.start_link(
+      fn ->
+        Logger.info("Starting Todo Server for #{list_name}")
+        {list_name, Todo.Database.get(list_name) || Todo.List.new()}
+      end,
+      name: via_tuple(list_name)
+    )
   end
 
   defp via_tuple(list_name) do
@@ -11,34 +17,28 @@ defmodule Todo.Server do
   end
 
   def add_entry(todo_server, new_entry) do
-    GenServer.cast(todo_server, {:add_entry, new_entry})
+    Agent.cast(todo_server, fn {list_name, todo_list} ->
+      new_list = Todo.List.add_entry(todo_list, new_entry)
+      Todo.Database.store(list_name, new_list)
+      {list_name, new_list}
+    end)
   end
 
   def entries(todo_server, date) do
-    GenServer.call(todo_server, {:entries, date})
+    Agent.get(
+      todo_server,
+      fn {_list_name, todo_list} ->
+        Todo.List.entries(todo_list, date)
+      end
+    )
   end
 
-  @impl GenServer
-  def init(list_name) do
-    Logger.info("Starting server for list #{list_name}")
-    # Try to fetch it from disk. Fallback to empty list
-    initial_list = Todo.Database.get(list_name) || Todo.List.new()
-    {:ok, {list_name, initial_list}}
-  end
-
-  @impl GenServer
-  def handle_cast({:add_entry, new_entry}, {list_name, todo_list}) do
-    new_todolist = Todo.List.add_entry(todo_list, new_entry)
-    Todo.Database.store(list_name, new_todolist)
-    {:noreply, {list_name, new_todolist}}
-  end
-
-  @impl GenServer
-  def handle_call({:entries, date}, _, {list_name, todo_list}) do
-    {
-      :reply,
-      Todo.List.entries(todo_list, date),
-      {list_name, todo_list}
-    }
+  def all_entries(todo_server) do
+    Agent.get(
+      todo_server,
+      fn {_list_name, todo_list} ->
+        Todo.List.all_entries(todo_list)
+      end
+    )
   end
 end
