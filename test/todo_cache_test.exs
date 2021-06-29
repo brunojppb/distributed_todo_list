@@ -1,8 +1,10 @@
-defmodule DistributedTodoTest do
+defmodule TodoCacheTest do
   use ExUnit.Case
 
   test "server_process" do
-    assert 1 = 1
+    bob_pid = Todo.Cache.server_process("bob")
+    assert bob_pid != Todo.Cache.server_process("alice")
+    assert bob_pid == Todo.Cache.server_process("bob")
   end
 
 end

@@ -34,6 +34,30 @@ Process.exit(worker_pid, :kill)
 [{worker_pid, _}] = Registry.lookup(Todo.ProcessRegistry, {Todo.DatabaseWorker, 2})
 ```
 
+## Testing the Web Server
+
+You can add todos to a specific list and fetch specific lists as well.
+
+Run the application:
+
+```shell
+iex -S mix
+```
+
+Now try to insert a few entries
+```shell
+curl -d "" \
+  "http://localhost:5454/add_entry?list=bruno&date=2021-06-20&title=Trip"
+
+curl -d "" \
+  "http://localhost:5454/add_entry?list=bruno&date=2021-06-20&title=Relax"
+```
+
+Now fetch the todos
+```shell
+curl "http://localhost:5454/entries?list=bruno&date=2021-06-20"
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/distributed_todo](https://hexdocs.pm/distributed_todo).
